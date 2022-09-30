@@ -146,9 +146,9 @@ const Keywords = ({ text = 'Connect ScopeBuilder', styles = 'bg-gradient-blue', 
                   <span className="text-[#999999] block text-[14px] capitalize ">keyword</span>
                   <span className="text-[16px] block">{item.keyword}</span>
                 </div>
-                <div className="bg-[#66DC781A] text-[#66DC78]  rounded-full w-[24px] h-[24px] flex justify-center items-center  ">
+                {numberOFJobs(item.keyword) > 0 && <div className="bg-[#66DC781A] text-[#66DC78]  rounded-full w-[24px] h-[24px] flex justify-center items-center  ">
                   {numberOFJobs(item.keyword)}
-                </div>
+                </div>}
               </Link>
             </div>
           </div>
