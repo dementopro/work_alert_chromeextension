@@ -27,7 +27,7 @@ const Keywords = ({ text = 'Connect ScopeBuilder', styles = 'bg-gradient-blue', 
   function addItem(e) {
     e.preventDefault();
     const doesStartWithUpwork = () => RSS.startsWith('https://www.upwork.com');
-    const isURLRss = RSS.startsWith('https://www.upwork.com/ab/feed/topics/rss?securityToken=') ? true : false;
+    const isURLRss = (RSS.startsWith('https://www.upwork.com/ab/feed/topics/rss') || RSS.startsWith('https://www.upwork.com/ab/feed/jobs/rss')  ) ? true : false;
 
 
     const fetchData = async () => {
