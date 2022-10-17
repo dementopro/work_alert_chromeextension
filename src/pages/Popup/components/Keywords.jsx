@@ -251,10 +251,9 @@ const Keywords = ({
         alert(e.response?.data?.message);
       });
   };
-  const click = () => {};
+
   useEffect(() => {
     // navigate('/KeywordsConnect');
-    click();
     getKeyword();
     getStatus();
     const localStorageKeywords = localStorageService.getItem('keywords');
