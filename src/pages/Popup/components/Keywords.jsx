@@ -16,7 +16,6 @@ import axios from 'axios';
 import { getCall, getPostCall } from '../api/Apicalls';
 import ScopeBuilderActive from './ScopeBuilderActive';
 import Loader from './Loader';
-import { chown } from 'fs-extra';
 
 const Keywords = ({
   text = 'Connect ScopeBuilder',
