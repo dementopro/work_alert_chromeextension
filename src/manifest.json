@@ -8,14 +8,11 @@
     "default_popup": "popup.html",
     "default_icon": "icon-sm.png"
   },
-  
+
   "icons": {
     "128": "icon-sm.png"
   },
-  "permissions":[
-    "background",
-    "storage"
-  ],
+  "permissions": ["background", "storage"],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],

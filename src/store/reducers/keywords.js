@@ -58,7 +58,7 @@ const sliceJobs = (jobs) => {
 };
 
 export const fetchJobs = createAsyncThunk('keywords/addKeyword', async () => {
-  console.log('calling  fetch Jobs')
+  console.log('calling  fetch Jobs');
   const keywords = localStorageService.getItem('keywords');
   if (keywords && keywords.length !== 0) {
     const result = await getAllJobs(keywords);
@@ -85,10 +85,12 @@ const keywordsSlice = createSlice({
       localStorageService.setItem('keywords', state.keywords);
     },
     removeKeyword: (state, action) => {
+      console.log('jobs', state, action);
       let tempKeywords = [];
       const jobs = localStorageService
         .getItem('jobs')
         .filter((job) => action.payload.keyword !== job.keyword);
+
       state.keywords.forEach((item) => {
         if (item.id !== action.payload.id) tempKeywords.push(item);
       });
@@ -97,21 +99,22 @@ const keywordsSlice = createSlice({
       localStorageService.setItem('jobs', jobs);
     },
     markAsSeen: (state, action) => {
-      const storegedJobs = localStorageService.getItem('jobs')
-      const reduxJobs = current(state.jobs)
-      const jobs = (reduxJobs && reduxJobs.length !== 0) ? reduxJobs : storegedJobs;
+      const storegedJobs = localStorageService.getItem('jobs');
+      const reduxJobs = current(state.jobs);
+      const jobs =
+        reduxJobs && reduxJobs.length !== 0 ? reduxJobs : storegedJobs;
 
       const output = jobs.map((job) => {
         if (job.keyword === action.payload) {
           return {
             ...job,
-            [seenKey]:true
-          }
+            [seenKey]: true,
+          };
         }
-        return job
-      })
+        return job;
+      });
       localStorageService.setItem('jobs', output);
-      state.jobs = output
+      state.jobs = output;
     },
   },
   extraReducers: (builder) => {
