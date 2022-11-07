@@ -26,7 +26,11 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
   };
 
   useEffect(() => {
-    if (!users.details) {
+    if (
+      !users.details &&
+      users?.scopebuilder_status &&
+      users?.scopebuilder_link
+    ) {
       var data = JSON.stringify({
         ref: users.scopebuilder_link,
       });
@@ -49,7 +53,7 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
         });
     }
     return () => {};
-  }, []);
+  }, [users]);
 
   const seeProfile = () => {
     if (users.scopebuilder_link) setProfileLink(users.scopebuilder_link);
