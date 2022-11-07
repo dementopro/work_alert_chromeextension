@@ -279,14 +279,14 @@ const Keywords = ({
         alert(error.response.data.message);
       });
   };
-  console.log(
-    moment(
-      moment(
-        moment(users?.current_plan?.updated_at) +
-          30 * users?.current_plan.items?.length
-      ).toISOString()
-    ).format('DD-MM-YYYY')
-  );
+  // console.log(
+  //   moment(
+  //     moment(
+  //       moment(users?.current_plan?.updated_at) +
+  //         30 * users?.current_plan.items?.length
+  //     ).toISOString()
+  //   ).format('DD-MM-YYYY')
+  // );
   return (
     <div className="app">
       <Header
@@ -295,10 +295,7 @@ const Keywords = ({
         link={'/Login'}
         text={'log out'}
         date={moment(
-          moment(
-            moment(users?.current_plan?.updated_at) +
-              30 * users?.current_plan.items?.length
-          ).toISOString()
+          moment(moment(users?.current_plan?.expired_at)).toISOString()
         ).format('DD-MM-YYYY')}
       />
 
