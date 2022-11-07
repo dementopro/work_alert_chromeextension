@@ -5,40 +5,35 @@ import axios from 'axios';
 import { getCall, getCallBackendURL, getPostCall } from '../api/Apicalls';
 import localStorageService from '../api/localStorageService';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 const ScopeBuilder = ({ fill = '#1890ff' }) => {
   const navigate = useNavigate();
   const [scopeBuilderLink, setScopeBuilderLink] = useState('');
   const [profileLink, setProfileLink] = useState('');
+  const [
+    connectScopeBuilderLoadingStatus,
+    setConnectScopeBuilderLoadingStatus,
+  ] = useState(false);
   const users = JSON.parse(localStorage.getItem('Users'));
 
   const connectNow = () => {
-    if (users.scopebuilder_status !== 1 && !users.scopebuilder_link) {
-      getCallBackendURL('redirect-scopebuilder', 'get', users?.token).then(
-        (response) => {
-          var data = JSON.stringify({
-            ref: users.scopebuilder_link,
-          });
-          getPostCall('connect-scopebuilder', 'post', data, users?.token)
-            .then(function (response) {
-              getCallBackendURL('user', 'get', users?.token).then((res) => {
-                console.log({ res });
-                localStorageService.setItem('Users', res.data);
-              });
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-          setScopeBuilderLink(response?.data?.url);
-          // window.open(response?.data?.url);
-        }
-      );
-    } else {
+    getCallBackendURL('redirect-scopebuilder', 'get', users?.token).then(
+      (response) => {
+        setScopeBuilderLink(response?.data?.url);
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (!users.details) {
       var data = JSON.stringify({
         ref: users.scopebuilder_link,
       });
+      setConnectScopeBuilderLoadingStatus(true);
       getPostCall('connect-scopebuilder', 'post', data, users?.token)
         .then(function (response) {
+          console.log({ response });
           getCallBackendURL('user', 'get', users?.token).then((res) => {
             console.log({ res });
             localStorageService.setItem('Users', res.data);
@@ -46,9 +41,15 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setConnectScopeBuilderLoadingStatus(false);
+          }, 3000);
         });
     }
-  };
+    return () => {};
+  }, []);
 
   const seeProfile = () => {
     if (users.scopebuilder_link) setProfileLink(users.scopebuilder_link);
@@ -110,7 +111,9 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
 
         <div
           className={`${
-            users.scopebuilder_status === 1 && users.scopebuilder_link
+            users.scopebuilder_status === 1 &&
+            users.scopebuilder_link &&
+            connectScopeBuilderLoadingStatus === false
               ? 'bg-gradient-green'
               : 'bg-gradient-blue'
           } flex-1 rounded-[10px] flex items-center justify-center`}
@@ -120,7 +123,7 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
           ) : (
             <>
               {scopeBuilderLink ? (
-                <iframe className="h-full w-full" src={scopeBuilderLink} />
+                <iframe className="h-full w-full" src={scopeBuilderLink} on />
               ) : (
                 <div>
                   <div className="relative mx-auto w-fit">
@@ -163,24 +166,41 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
                   </div>
                   <div className="my-[32px]">
                     <span className="text-[20px] font-medium block text-center  ">
-                      {users.scopebuilder_status === 1 &&
-                      users.scopebuilder_link
+                      {connectScopeBuilderLoadingStatus
+                        ? 'Connection To ScopeBuilder'
+                        : users.scopebuilder_status === 1 &&
+                          users.scopebuilder_link
                         ? 'ScopeBuilder Connected'
                         : 'Connect ScopeBuilder'}
                     </span>
                     <span className="text-[12px] block text-center">
-                      {users.scopebuilder_status === 1 &&
-                      users.scopebuilder_link
+                      {connectScopeBuilderLoadingStatus
+                        ? 'We appreciate your patience. Please wait while WorkAlert is waiting for ScopeBuilder verification.'
+                        : users.scopebuilder_status === 1 &&
+                          users.scopebuilder_link
                         ? 'Congratulations! You’ve successfully linked your ScopeBuilder account.'
                         : 'Connect with your ScopeBuilder account and use for free!'}
                     </span>
                   </div>
                   <div className="w-fit mx-auto">
-                    {users.scopebuilder_status === 1 &&
-                    users.scopebuilder_link ? (
+                    {connectScopeBuilderLoadingStatus ? (
+                      <button
+                        onClick={() => {
+                          setConnectScopeBuilderLoadingStatus(false);
+                          // seeProfile();
+                          // connectNow();
+                          // to={'/StatusConnecting'}
+                        }}
+                        className={`text-[#1890FF] bg-white font-medium uppercase   text-[16px] py-[16px] px-[32px] rounded-[4px] `}
+                      >
+                        CANCEL
+                      </button>
+                    ) : users.scopebuilder_status === 1 &&
+                      users.scopebuilder_link ? (
                       <button
                         onClick={() => {
                           seeProfile();
+                          // connectNow();
                           // to={'/StatusConnecting'}
                         }}
                         className={`text-[#66DC78] bg-white font-medium uppercase   text-[16px] py-[16px] px-[32px] rounded-[4px] `}
