@@ -2,23 +2,35 @@ import React from 'react';
 import Header from './Header';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { getPostCall } from '../api/Apicalls';
+import { getCall, getCallBackendURL, getPostCall } from '../api/Apicalls';
+import localStorageService from '../api/localStorageService';
 
 const ScopeBuilder = ({ fill = '#1890ff' }) => {
   const navigate = useNavigate();
 
   const connectNow = () => {
     const users = JSON.parse(localStorage.getItem('Users'));
-    var data = JSON.stringify({
-      ref: 'https://dev.scopebuilder.co?ref=Alex',
-    });
-    getPostCall('connect-scopebuilder', 'post', data, users?.token)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
+    if (users.scopebuilder_status !== 1 && !users.scopebuilder_link) {
+      getCallBackendURL('redirect-scopebuilder', 'get', users?.token).then(
+        (response) => {
+          window.open(response?.data?.url);
+        }
+      );
+    } else {
+      var data = JSON.stringify({
+        ref: users.scopebuilder_link,
       });
+      getPostCall('connect-scopebuilder', 'post', data, users?.token)
+        .then(function (response) {
+          getCallBackendURL('user', 'get', users?.token).then((res) => {
+            console.log({ res });
+            localStorageService.setItem('Users', res.data);
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   };
   return (
     <div className="flex flex-col h-full">

@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import localStorageService from '../api/localStorageService';
 import { useEffect } from 'react';
-import { getPostCall } from '../api/Apicalls';
+import { getCallBackendURL, getPostCall } from '../api/Apicalls';
 import Loader from './Loader';
 
 const Login = () => {
@@ -38,6 +38,9 @@ const Login = () => {
   useEffect(() => {
     if (users === null) {
     } else {
+      getCallBackendURL('user', 'get', users?.token).then((res) => {
+        localStorageService.setItem('Users', res.data);
+      });
       if (users?.current_plan === null && users?.scopebuilder_status === 0) {
         navigate('/GetStarted');
       } else {
