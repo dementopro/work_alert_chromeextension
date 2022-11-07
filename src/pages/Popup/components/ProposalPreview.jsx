@@ -96,7 +96,11 @@ const ProposalPreview = () => {
               <button
                 className=" text-[20px] font-medium uppercase text-[#66DC78] mx-[16px]  "
                 onClick={() =>
-                  copy(proposalText + ' ' + users.scopebuilder_link)
+                  copy(
+                    proposalText + ' ' + users.scopebuilder_link
+                      ? users.scopebuilder_link
+                      : ''
+                  )
                 }
               >
                 Copy

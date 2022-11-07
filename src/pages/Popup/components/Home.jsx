@@ -168,7 +168,11 @@ const Home = () => {
                 {isEdit && (
                   <button
                     onClick={() =>
-                      copy(proposalText + ' ' + users.scopebuilder_link)
+                      copy(
+                        proposalText + ' ' + users.scopebuilder_link
+                          ? users.scopebuilder_link
+                          : ''
+                      )
                     }
                     className="flex items-center justify-center rounded-full w-[59px] h-[59px] bg-[#142C18] "
                   >
