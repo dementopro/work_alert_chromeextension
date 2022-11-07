@@ -9,10 +9,10 @@ import { useState } from 'react';
 const ScopeBuilder = ({ fill = '#1890ff' }) => {
   const navigate = useNavigate();
   const [scopeBuilderLink, setScopeBuilderLink] = useState('');
+  const users = JSON.parse(localStorage.getItem('Users'));
 
   const connectNow = () => {
-    const users = JSON.parse(localStorage.getItem('Users'));
-    if ((users.scopebuilder_status !== 1 && !users.scopebuilder_link) || true) {
+    if (users.scopebuilder_status !== 1 && !users.scopebuilder_link) {
       getCallBackendURL('redirect-scopebuilder', 'get', users?.token).then(
         (response) => {
           setScopeBuilderLink(response?.data?.url);
@@ -74,14 +74,28 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               <span className="uppercase font-medium text-[20px] ">
                 ScopeBuilder
               </span>
-              <span className="uppercase font-medium text-[12px] py-[4px] px-[8px] bg-[#282828] rounded-[4px] text-white w-fit   ">
-                disconnected
+              <span
+                className={`${
+                  users.scopebuilder_status === 1 && users.scopebuilder_link
+                    ? 'text-[#66DC78]'
+                    : 'text-white'
+                }  uppercase font-medium text-[12px] py-[4px] px-[8px] bg-[#282828] rounded-[4px]  w-fit   `}
+              >
+                {users.scopebuilder_status === 1 && users.scopebuilder_link
+                  ? 'Connected'
+                  : 'Disconnected'}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-blue flex-1 rounded-[10px] flex items-center justify-center">
+        <div
+          className={`${
+            users.scopebuilder_status === 1 && users.scopebuilder_link
+              ? 'bg-gradient-green'
+              : 'bg-gradient-blue'
+          } flex-1 rounded-[10px] flex items-center justify-center`}
+        >
           {scopeBuilderLink ? (
             <iframe className="h-full w-full" src={scopeBuilderLink} />
           ) : (
@@ -126,10 +140,14 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               </div>
               <div className="my-[32px]">
                 <span className="text-[20px] font-medium block text-center  ">
-                  Connect ScopeBuilder
+                  {users.scopebuilder_status === 1 && users.scopebuilder_link
+                    ? 'ScopeBuilder Connected'
+                    : 'Connect ScopeBuilder'}
                 </span>
                 <span className="text-[12px] block text-center">
-                  Connect with your ScopeBuilder account and use for free!
+                  {users.scopebuilder_status === 1 && users.scopebuilder_link
+                    ? 'Congratulations! You’ve successfully linked your ScopeBuilder account.'
+                    : 'Connect with your ScopeBuilder account and use for free!'}
                 </span>
               </div>
               <div className="w-fit mx-auto">
@@ -138,9 +156,15 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
                     connectNow();
                     // to={'/StatusConnecting'}
                   }}
-                  className=" bg-white font-medium uppercase text-[#1890FF] text-[16px] py-[16px] px-[32px] rounded-[4px] "
+                  className={`${
+                    users.scopebuilder_status === 1 && users.scopebuilder_link
+                      ? 'text-[#66DC78]'
+                      : 'text-[#1890FF]'
+                  } bg-white font-medium uppercase   text-[16px] py-[16px] px-[32px] rounded-[4px] `}
                 >
-                  Connect Now
+                  {users.scopebuilder_status === 1 && users.scopebuilder_link
+                    ? 'VIEW SCOPEBUILDER PROFILE'
+                    : 'Connect Now'}
                 </button>
               </div>
             </div>
