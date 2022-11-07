@@ -294,9 +294,13 @@ const Keywords = ({
         showButton={true}
         link={'/Login'}
         text={'log out'}
-        date={moment(
-          moment(moment(users?.current_plan?.expired_at)).toISOString()
-        ).format('DD-MM-YYYY')}
+        date={
+          users?.current_plan?.expired_at
+            ? moment(
+                moment(moment(users?.current_plan?.expired_at)).toISOString()
+              ).format('DD-MM-YYYY')
+            : null
+        }
       />
 
       <div className="bg-[#000000] px-[32px] relative">

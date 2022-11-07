@@ -45,21 +45,11 @@ const Header = ({
           Alert
         </span>
         <div className="flex gap-[24px] items-center ">
-          {users && (
-            <>
-              {users?.scopebuilder_status ? (
-                <>
-                  {date && (
-                    <span className="text-[#999999] uppercase ">
-                      {' '}
-                      Valid Till <span>{date}</span>{' '}
-                    </span>
-                  )}
-                </>
-              ) : (
-                <></>
-              )}
-            </>
+          {date && (
+            <span className="text-[#999999] uppercase ">
+              {' '}
+              Valid Till <span>{date}</span>{' '}
+            </span>
           )}
           {showBackButton && (
             <button
