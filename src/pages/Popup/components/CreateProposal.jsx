@@ -69,7 +69,7 @@ const CreateProposal = () => {
                 Referral Link{' '}
               </span>
               <a className="  text-[16px] rounded-[4px]   text-[#66DC78] block  ">
-                https://www.scopebuilder.com/referral=true{' '}
+                {users.scopebuilder_link}
               </a>
             </div>
           </div>
