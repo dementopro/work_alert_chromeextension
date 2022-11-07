@@ -36,6 +36,16 @@ const Keywords = ({
   const seenKey = '__seen';
   const dispatch = useDispatch();
   const users = localStorageService.getItem('Users');
+
+  useEffect(() => {
+    if (users.scopebuilder_status && users.scopebuilder_link) {
+      setSBStatus(true);
+    } else {
+      setSBStatus(false);
+    }
+    return () => {};
+  }, [users]);
+
   function removeItem(selected) {
     getPostCall(`keywords/${selected.keywordId}`, 'delete', '', users?.token)
       .then((e) => {
@@ -225,17 +235,22 @@ const Keywords = ({
     }
   }
   const getStatus = () => {
-    getCall('verify-dev?waID=32&ref=Alex', 'get', users?.token)
-      .then((e) => {
-        if (e?.data?.error) {
-          setSBStatus(false);
-        } else {
-          setSBStatus(true);
-        }
-      })
-      .catch((e) => {
-        cons(e?.data);
-      });
+    // getCall(
+    //   `verify-dev?waID=${users.user_id}&ref=${users.email}`,
+    //   'get',
+    //   users?.token
+    // )
+    //   .then((e) => {
+    //     console.log({ kk: e });
+    //     if (e?.data?.message != 'success') {
+    //       setSBStatus(false);
+    //     } else {
+    //       setSBStatus(true);
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     cons(e?.data);
+    //   });
   };
   const getKeyword = () => {
     getPostCall('keywords', 'get', '', users?.token)
@@ -254,7 +269,7 @@ const Keywords = ({
   useEffect(() => {
     // navigate('/KeywordsConnect');
     getKeyword();
-    getStatus();
+    // getStatus();
     const localStorageKeywords = localStorageService.getItem('keywords');
     dispatch(setKeywords(localStorageKeywords));
   }, []);
