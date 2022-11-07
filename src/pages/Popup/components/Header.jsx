@@ -6,7 +6,14 @@ import { setKeywords } from '../../../store/reducers/keywords';
 import { getPostCall } from '../api/Apicalls';
 import localStorageService from '../api/localStorageService';
 
-const Header = ({ text, link, styles, showButton = true, date = '' }) => {
+const Header = ({
+  text,
+  link,
+  styles,
+  showButton = true,
+  date = '',
+  showBackButton = false,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const users = localStorageService.getItem('Users');
@@ -38,11 +45,29 @@ const Header = ({ text, link, styles, showButton = true, date = '' }) => {
           Alert
         </span>
         <div className="flex gap-[24px] items-center ">
-          {date && (
-            <span className="text-[#999999] uppercase ">
-              {' '}
-              Valid Till <span>{date}</span>{' '}
-            </span>
+          {users && (
+            <>
+              {users?.scopebuilder_status ? (
+                <>
+                  {date && (
+                    <span className="text-[#999999] uppercase ">
+                      {' '}
+                      Valid Till <span>{date}</span>{' '}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <></>
+              )}
+            </>
+          )}
+          {showBackButton && (
+            <button
+              onClick={() => navigate(-1)}
+              className={`${styles} font-medium uppercase text-[13px] px-[16px] py-[8px] rounded-[4px]`}
+            >
+              {'Back'}
+            </button>
           )}
           {showButton && (
             <button
