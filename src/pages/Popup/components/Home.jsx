@@ -65,7 +65,9 @@ const Home = () => {
 
   useEffect(() => {
     if (allNewJobs?.jobs?.length > 0) {
-      let badgeText = allNewJobs?.jobs.filter((a) => a.__seen === false).length;
+      let badgeText = allNewJobs?.jobs
+        // .slice(0, 30)
+        .filter((a) => a.__seen === false).length;
       chrome.runtime.sendMessage({
         from: 'Home.jsx',
         action: 'SET_BADGE',

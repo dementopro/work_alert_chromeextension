@@ -50,7 +50,7 @@ const Keywords = ({
     if (jobs?.length > 0) {
       let badgeText = jobs.filter((a) => a.__seen === false).length;
       chrome.runtime.sendMessage({
-        from: 'Home.jsx',
+        from: 'Keywords.jsx',
         action: 'SET_BADGE',
         payload: badgeText ? badgeText : '',
       });
