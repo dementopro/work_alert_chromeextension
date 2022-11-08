@@ -112,14 +112,19 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               </span>
               <span
                 className={`${
-                  users?.scopebuilder_status === 1 && users?.scopebuilder_link
+                  users?.scopebuilder_status === 1 &&
+                  users?.scopebuilder_link &&
+                  users?.details
                     ? 'text-[#66DC78]'
                     : 'text-white'
-                }  uppercase font-medium text-[12px] py-[4px] px-[8px] bg-[#282828] rounded-[4px]  w-fit   `}
+                } 
+                  uppercase font-medium text-[12px] py-[4px] px-[8px] bg-[#282828] rounded-[4px]  w-fit   `}
               >
                 {connectScopeBuilderLoadingStatus
                   ? 'Connecting...'
-                  : users?.scopebuilder_status === 1 && users?.scopebuilder_link
+                  : users?.scopebuilder_status === 1 &&
+                    users?.scopebuilder_link &&
+                    users?.details
                   ? 'Connected'
                   : 'Disconnected'}
               </span>
