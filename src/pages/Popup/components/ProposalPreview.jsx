@@ -15,6 +15,8 @@ const ProposalPreview = () => {
   const [proposalId, setProposalId] = useState('');
   const [loader, setLoader] = useState(false);
   const users = localStorageService.getItem('Users');
+  const referral_text =
+    'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
 
   const deleteProposals = () => {
     setLoader(true);
@@ -95,13 +97,17 @@ const ProposalPreview = () => {
             <div className="">
               <button
                 className=" text-[20px] font-medium uppercase text-[#66DC78] mx-[16px]  "
-                onClick={() =>
+                onClick={() => {
                   copy(
-                    proposalText + ' ' + users.scopebuilder_link
-                      ? users.scopebuilder_link
-                      : ''
-                  )
-                }
+                    proposalText
+                      .concat(' ')
+                      .concat(referral_text)
+                      .concat(' ')
+                      .concat(
+                        users.scopebuilder_link ? users.scopebuilder_link : ''
+                      )
+                  );
+                }}
               >
                 Copy
               </button>
@@ -132,7 +138,7 @@ const ProposalPreview = () => {
                   {' '}
                   0<span>/500</span>{' '}
                 </span>
-
+                {referral_text}
                 <div className=" m-[16px] p-[16px] bg-[#282828]  border border-[#999999] rounded-[4px]">
                   <span className=" font-medium text-[16px] text-[#999999] block uppercase">
                     {' '}

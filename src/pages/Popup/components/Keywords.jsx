@@ -46,6 +46,18 @@ const Keywords = ({
     return () => {};
   }, [users]);
 
+  useEffect(() => {
+    if (jobs?.length > 0) {
+      let badgeText = jobs.filter((a) => a.__seen === false).length;
+      chrome.runtime.sendMessage({
+        from: 'Home.jsx',
+        action: 'SET_BADGE',
+        payload: badgeText ? badgeText : '',
+      });
+    }
+    return () => {};
+  }, [jobs]);
+
   function removeItem(selected) {
     getPostCall(`keywords/${selected.keywordId}`, 'delete', '', users?.token)
       .then((e) => {

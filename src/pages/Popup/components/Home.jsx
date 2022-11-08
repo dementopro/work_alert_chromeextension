@@ -21,6 +21,8 @@ const Home = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [proposalText, setProposalText] = useState('');
   const users = localStorageService.getItem('Users');
+  const referral_text =
+    'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
 
   const handleToggleModal = (link) => {
     // setShowModal(!showModal);
@@ -41,8 +43,12 @@ const Home = () => {
   const filteredJobs = (IncomingJobs) => {
     const localStorageJobs = localStorageService.getItem('jobs');
     if (IncomingJobs && IncomingJobs.length !== 0) {
-      console.log(IncomingJobs);
-      console.log('it will go here');
+      console.log({ IncomingJobs });
+      console.log(
+        'it will go here',
+        IncomingJobs.filter((a) => a.__seen === false).length
+      );
+
       return IncomingJobs.filter(
         (job) => job.keyword === keyword.state[0].keyword
       );
@@ -56,6 +62,18 @@ const Home = () => {
     }
     return [];
   };
+
+  useEffect(() => {
+    if (allNewJobs?.jobs?.length > 0) {
+      let badgeText = allNewJobs?.jobs.filter((a) => a.__seen === false).length;
+      chrome.runtime.sendMessage({
+        from: 'Home.jsx',
+        action: 'SET_BADGE',
+        payload: badgeText ? badgeText : '',
+      });
+    }
+    return () => {};
+  }, [allNewJobs?.jobs]);
 
   useEffect(() => {
     //   let config = localStorage.getItem('config')
@@ -169,9 +187,15 @@ const Home = () => {
                   <button
                     onClick={() =>
                       copy(
-                        proposalText + ' ' + users.scopebuilder_link
-                          ? users.scopebuilder_link
-                          : ''
+                        proposalText
+                          .concat(' ')
+                          .concat(referral_text)
+                          .concat(' ')
+                          .concat(
+                            users.scopebuilder_link
+                              ? users.scopebuilder_link
+                              : ''
+                          )
                       )
                     }
                     className="flex items-center justify-center rounded-full w-[59px] h-[59px] bg-[#142C18] "
