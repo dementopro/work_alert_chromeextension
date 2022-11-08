@@ -310,7 +310,14 @@ const Home = () => {
                           : 'Read More'}
                       </button>
                     ) : (
-                      ''
+                      <button
+                        onClick={() => {
+                          handleToggleModal(item.link);
+                        }}
+                        className="font-bold text-[#66DC78] text-[16px]"
+                      >
+                        View Job Posting
+                      </button>
                     )}
                   </div>
                 </div>

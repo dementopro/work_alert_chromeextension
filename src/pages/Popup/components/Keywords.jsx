@@ -38,7 +38,10 @@ const Keywords = ({
   const users = localStorageService.getItem('Users');
 
   useEffect(() => {
-    if (users?.scopebuilder_status && users?.scopebuilder_link) {
+    if (
+      (users?.scopebuilder_status && users?.scopebuilder_link) ||
+      users?.current_plan
+    ) {
       setSBStatus(true);
     } else {
       setSBStatus(false);
@@ -442,7 +445,7 @@ const Keywords = ({
             link={link}
             text={text}
             styles={styles}
-            status={sbStatus}
+            status={users?.scopebuilder_status && users?.scopebuilder_link}
             fill={fill}
           />
         </div>
