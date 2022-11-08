@@ -51,7 +51,7 @@ const Header = ({
           Alert
         </span>
         <div className="flex gap-[24px] items-center ">
-          {date && (
+          {date && !users?.details && (
             <span className="text-[#999999] uppercase ">
               {' '}
               Valid Till <span>{date}</span>{' '}
