@@ -38,7 +38,7 @@ const Keywords = ({
   const users = localStorageService.getItem('Users');
 
   useEffect(() => {
-    if (users.scopebuilder_status && users.scopebuilder_link) {
+    if (users?.scopebuilder_status && users?.scopebuilder_link) {
       setSBStatus(true);
     } else {
       setSBStatus(false);

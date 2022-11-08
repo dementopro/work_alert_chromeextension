@@ -34,10 +34,10 @@ const Header = ({
             action: 'SET_BADGE',
             payload: '',
           });
-          navigate(linek);
+          navigate('/Login');
         })
         .catch((e) => {
-          console.log(e);
+          navigate('/Login');
         });
     } else {
       navigate(linek);

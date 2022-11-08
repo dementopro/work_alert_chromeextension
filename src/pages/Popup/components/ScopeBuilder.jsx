@@ -11,6 +11,8 @@ import StatusConnecting from './StatusConnecting';
 import StatusConnectNow from './StatusConnectNow';
 import StatusConnected from './StatusConnected';
 
+const users = JSON.parse(localStorage.getItem('Users'));
+
 const ScopeBuilder = ({ fill = '#1890ff' }) => {
   const navigate = useNavigate();
   const [scopeBuilderLink, setScopeBuilderLink] = useState('');
@@ -21,7 +23,6 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
   ] = useState(false);
   const [connectScopeBuilderErrorState, setConnectScopeBuilderErrorState] =
     useState(false);
-  const users = JSON.parse(localStorage.getItem('Users'));
 
   const connectNow = () => {
     getCallBackendURL('redirect-scopebuilder', 'get', users?.token).then(
@@ -33,9 +34,10 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
 
   useEffect(() => {
     if (
-      !users.details &&
+      !users?.details &&
       users?.scopebuilder_status &&
-      users?.scopebuilder_link
+      users?.scopebuilder_link &&
+      users
     ) {
       connectSBConnect();
     }
@@ -44,12 +46,12 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
 
   const connectSBConnect = () => {
     var data = JSON.stringify({
-      ref: users.scopebuilder_link,
+      ref: users?.scopebuilder_link,
     });
     setConnectScopeBuilderLoadingStatus(true);
     getPostCall('connect-scopebuilder', 'post', data, users?.token)
       .then(function (response) {
-        console.log({ response });
+        setConnectScopeBuilderLoadingStatus(false);
         if (response.error) {
           setConnectScopeBuilderErrorState(true);
         } else {
@@ -59,18 +61,14 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
         }
       })
       .catch(function (error) {
+        setConnectScopeBuilderLoadingStatus(false);
         setConnectScopeBuilderErrorState(true);
         console.log(error);
-      })
-      .finally(() => {
-        setTimeout(() => {
-          setConnectScopeBuilderLoadingStatus(false);
-        }, 5000);
       });
   };
 
   const seeProfile = () => {
-    if (users.scopebuilder_link) setProfileLink(users.scopebuilder_link);
+    if (users?.scopebuilder_link) setProfileLink(users?.scopebuilder_link);
   };
 
   return (
@@ -114,12 +112,14 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               </span>
               <span
                 className={`${
-                  users.scopebuilder_status === 1 && users.scopebuilder_link
+                  users?.scopebuilder_status === 1 && users?.scopebuilder_link
                     ? 'text-[#66DC78]'
                     : 'text-white'
                 }  uppercase font-medium text-[12px] py-[4px] px-[8px] bg-[#282828] rounded-[4px]  w-fit   `}
               >
-                {users.scopebuilder_status === 1 && users.scopebuilder_link
+                {connectScopeBuilderLoadingStatus
+                  ? 'Connecting...'
+                  : users?.scopebuilder_status === 1 && users?.scopebuilder_link
                   ? 'Connected'
                   : 'Disconnected'}
               </span>
@@ -135,7 +135,7 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               setConnectScopeBuilderLoadingStatus
             }
           />
-        ) : users.scopebuilder_status === 1 && users.scopebuilder_link ? (
+        ) : users?.scopebuilder_status === 1 && users?.scopebuilder_link ? (
           <StatusConnected
             fill="#1890ff"
             seeProfile={seeProfile}

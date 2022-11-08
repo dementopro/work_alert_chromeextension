@@ -60,7 +60,7 @@ const StatusFailed = ({ connectSBConnect }) => {
             cancel
           </Link>
           <button
-            onClick={connectSBConnect}
+            onClick={() => connectSBConnect()}
             className=" bg-[#920000] font-medium uppercase text-white text-[16px] py-[16px] px-[32px] rounded-[4px] "
           >
             Retry Connection
