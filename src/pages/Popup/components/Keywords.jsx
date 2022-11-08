@@ -279,11 +279,13 @@ const Keywords = ({
   };
 
   useEffect(() => {
-    // navigate('/KeywordsConnect');
-    getKeyword();
-    // getStatus();
-    const localStorageKeywords = localStorageService.getItem('keywords');
-    dispatch(setKeywords(localStorageKeywords));
+    if (sbStatus) {
+      // navigate('/KeywordsConnect');
+      getKeyword();
+      // getStatus();
+      const localStorageKeywords = localStorageService.getItem('keywords');
+      dispatch(setKeywords(localStorageKeywords));
+    }
   }, []);
 
   const addKeywords = () => {
@@ -316,6 +318,22 @@ const Keywords = ({
   // );
   return (
     <div className="app">
+      <div className="absolute z-20 h-screen w-screen bg-[rgb(0,0,0,0.7)] flex justify-center items-center ">
+        <div className="mx-32 bg-[#282828] h-auto flex justify-center item-center self-center flex-col p-[32px]">
+          <h2 className="text-center font-bold text-2xl">Access denied</h2>
+          <h3 className="text-center mb-5">
+            Subscribe or Connect ScopeBuilder to access extension
+          </h3>
+          <button
+            onClick={() => {
+              navigate('/GetStarted');
+            }}
+            className={`bg-[#66DC78] text-white font-medium uppercase   text-[16px] py-[16px] px-[32px] rounded-[4px] `}
+          >
+            Back
+          </button>
+        </div>
+      </div>
       <Header
         styles={'bg-[#000000] text-white'}
         showButton={true}
