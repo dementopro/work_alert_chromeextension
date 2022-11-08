@@ -20,6 +20,9 @@ const checkNewJobs = () => {
                 message: 'Be first to apply! 👊',
                 type: 'basic',
               });
+              chrome.action.setBadgeText({
+                text: newJobs.toString(),
+              });
             }
             prevJobs = data;
           });
