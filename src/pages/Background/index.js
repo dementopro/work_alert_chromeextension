@@ -26,7 +26,7 @@ const checkNewJobs = () => {
         }
       }
     });
-  }, 20000);
+  }, 5000);
 };
 
 checkNewJobs();

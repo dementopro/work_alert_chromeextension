@@ -29,6 +29,11 @@ const Header = ({
           localStorage.clear();
           window.localStorage.clear();
           console.log(linek);
+          chrome.runtime.sendMessage({
+            from: 'Header.jsx',
+            action: 'SET_BADGE',
+            payload: '',
+          });
           navigate(linek);
         })
         .catch((e) => {
