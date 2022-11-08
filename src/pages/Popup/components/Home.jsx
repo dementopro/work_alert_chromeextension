@@ -14,13 +14,13 @@ import { copy } from '../utils';
 
 const Home = () => {
   const params = useParams();
-  console.log(params);
   const keyword = useLocation();
   const allNewJobs = useSelector((state) => state.keywords);
   const dispatch = useDispatch();
   const [isEdit, setIsEdit] = useState(false);
   const [proposalText, setProposalText] = useState('');
   const users = localStorageService.getItem('Users');
+  const [showMoreState, setShowMoreState] = useState([]);
   const referral_text =
     'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
 
@@ -43,7 +43,6 @@ const Home = () => {
   const filteredJobs = (IncomingJobs) => {
     const localStorageJobs = localStorageService.getItem('jobs');
     if (IncomingJobs && IncomingJobs.length !== 0) {
-      console.log({ IncomingJobs });
       console.log(
         'it will go here',
         IncomingJobs.filter((a) => a.__seen === false).length
@@ -55,7 +54,6 @@ const Home = () => {
     }
     if (localStorageJobs && localStorageJobs !== 0) {
       console.log('this is local storage');
-      console.log(localStorageJobs);
       return localStorageJobs.filter(
         (job) => job.keyword === keyword.state[0].keyword
       );
@@ -101,6 +99,15 @@ const Home = () => {
       dispatch(markAsSeen(keyword.state[0].keyword));
     };
   }, []);
+
+  useEffect(() => {
+    if (allNewJobs?.jobs) {
+      if (allNewJobs.jobs.length > 0) {
+        setShowMoreState(allNewJobs.jobs);
+      }
+    }
+    return () => {};
+  }, [allNewJobs?.jobs]);
 
   return (
     <div>
@@ -232,39 +239,6 @@ const Home = () => {
                     </svg>
                   </button>
                 )}
-                {/* <Link
-                  to={`/ProposalPreview/${params.id}`}
-                  className="flex items-center justify-center rounded-full w-[59px] h-[59px] bg-[#142C18] "
-                >
-                  <svg
-                    id="copy"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      id="Vector"
-                      d="M14,4.9V9.1c0,3.5-1.4,4.9-4.9,4.9H4.9C1.4,14,0,12.6,0,9.1V4.9C0,1.4,1.4,0,4.9,0H9.1C12.6,0,14,1.4,14,4.9Z"
-                      transform="translate(2 8)"
-                      fill="#66dc78"
-                    />
-                    <path
-                      id="Vector-2"
-                      data-name="Vector"
-                      d="M9.09,0H4.89C1.44,0,.04,1.37,0,4.75H3.09c4.2,0,6.15,1.95,6.15,6.15v3.09c3.38-.04,4.75-1.44,4.75-4.89V4.9C13.99,1.4,12.59,0,9.09,0Z"
-                      transform="translate(8.01 2)"
-                      fill="#66dc78"
-                    />
-                    <path
-                      id="Vector-3"
-                      data-name="Vector"
-                      d="M0,0H24V24H0Z"
-                      fill="none"
-                      opacity="0"
-                    />
-                  </svg>
-                </Link> */}
               </div>
             </div>
           </div>
@@ -303,15 +277,41 @@ const Home = () => {
                       {handleHTMLcoding(item.title)}
                     </h1>
                     <p className=" text-[#999999] text-[16px] leading-[32px] mb-[16px]   ">
-                      {truncate(item.description)}
+                      {showMoreState.find((a) => a.link === item.link)?.seeMore
+                        ? item.description
+                        : truncate(item.description)}
                     </p>
-                    <button
-                      onClick={() => handleToggleModal(item.link)}
-                      className="font-bold text-[#66DC78] text-[16px]"
-                    >
-                      {' '}
-                      Read More{' '}
-                    </button>
+                    {handleHTMLcoding(item.description).length > 190 ? (
+                      <button
+                        onClick={() => {
+                          if (
+                            showMoreState.find((a) => a.link === item.link)
+                              ?.seeMore
+                          ) {
+                            handleToggleModal(item.link);
+                          } else {
+                            setShowMoreState((prev) => {
+                              const newState = prev.map((obj) => {
+                                if (obj.link === item.link) {
+                                  return { ...obj, seeMore: !obj?.seeMore };
+                                } else {
+                                  return obj;
+                                }
+                              });
+                              return newState;
+                            });
+                          }
+                        }}
+                        className="font-bold text-[#66DC78] text-[16px]"
+                      >
+                        {showMoreState.find((a) => a.link === item.link)
+                          ?.seeMore
+                          ? 'View Job Posting'
+                          : 'Read More'}
+                      </button>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </div>
               </div>
