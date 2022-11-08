@@ -11,3 +11,19 @@ export const copy = (text) => {
   textField.remove();
   alert('Copied');
 };
+
+export const getDiff = (array1, array2) => {
+  const isSameUser = (obj1, obj2) => obj1.id === obj2.id;
+
+  const onlyInLeft = (left, right, compareFunction) =>
+    left.filter(
+      (leftValue) =>
+        !right.some((rightValue) => compareFunction(leftValue, rightValue))
+    );
+
+  const onlyInA = onlyInLeft(array1, array2, isSameUser);
+  const onlyInB = onlyInLeft(array2, array1, isSameUser);
+
+  const result = [...onlyInA, ...onlyInB];
+  return result;
+};

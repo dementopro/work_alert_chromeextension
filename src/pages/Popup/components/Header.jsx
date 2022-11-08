@@ -24,6 +24,7 @@ const Header = ({
       });
       getPostCall('logout', 'post', data, users?.token)
         .then((e) => {
+          chrome.storage.local.set({ Users: null, keywords: [] });
           dispatch(setKeywords([]));
           localStorage.clear();
           window.localStorage.clear();

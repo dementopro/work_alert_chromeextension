@@ -23,6 +23,7 @@ const Login = () => {
     });
     getPostCall('login', 'post', data)
       .then((e) => {
+        chrome.storage.local.set({ Users: e.data });
         console.log(e.data);
         setError('');
         localStorageService.setItem('Users', e.data);
