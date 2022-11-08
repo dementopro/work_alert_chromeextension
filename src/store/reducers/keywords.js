@@ -99,6 +99,12 @@ const keywordsSlice = createSlice({
       localStorageService.setItem('keywords', state.keywords);
       chrome.storage.local.set({ keywords: state.keywords });
       localStorageService.setItem('jobs', jobs);
+      let badgeText = jobs.filter((a) => a.__seen === false).length;
+      chrome.runtime.sendMessage({
+        from: 'Keywords.jsx',
+        action: 'SET_BADGE',
+        payload: badgeText ? badgeText : '',
+      });
     },
     markAsSeen: (state, action) => {
       const storegedJobs = localStorageService.getItem('jobs');
