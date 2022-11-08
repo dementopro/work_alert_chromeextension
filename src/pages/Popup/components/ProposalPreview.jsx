@@ -138,8 +138,8 @@ const ProposalPreview = () => {
                   {' '}
                   0<span>/500</span>{' '}
                 </span>
-                {referral_text}
                 <div className=" m-[16px] p-[16px] bg-[#282828]  border border-[#999999] rounded-[4px]">
+                  {referral_text}
                   <span className=" font-medium text-[16px] text-[#999999] block uppercase">
                     {' '}
                     Referral Link{' '}
