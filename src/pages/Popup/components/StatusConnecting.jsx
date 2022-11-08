@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const StatusConnecting = () => {
+const StatusConnecting = ({
+  setConnectScopeBuilderLoadingStatus,
+  setConnectScopeBuilderErrorState,
+}) => {
   return (
     <div className="h-full w-full bg-gradient-blue rounded-[10px] flex items-center justify-center">
       <div>
@@ -53,12 +56,14 @@ const StatusConnecting = () => {
           </span>
         </div>
         <div className="w-fit mx-auto">
-          <Link
-            to={'/StatusFailed'}
+          <button
+            onClick={() => {
+              setConnectScopeBuilderErrorState(true);
+            }}
             className=" bg-white font-medium uppercase text-[#1890FF] text-[21px] py-[16px] px-[32px] rounded-[4px] "
           >
             Cancel
-          </Link>
+          </button>
         </div>
       </div>
     </div>

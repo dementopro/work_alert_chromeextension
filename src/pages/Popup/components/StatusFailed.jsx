@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const StatusFailed = () => {
+const StatusFailed = ({ connectSBConnect }) => {
   return (
     <div className="h-full w-full  bg-gradient-red rounded-[10px] flex items-center justify-center">
       <div>
@@ -59,12 +59,12 @@ const StatusFailed = () => {
           >
             cancel
           </Link>
-          <Link
-            to={'/KeywordsConnected'}
+          <button
+            onClick={connectSBConnect}
             className=" bg-[#920000] font-medium uppercase text-white text-[16px] py-[16px] px-[32px] rounded-[4px] "
           >
             Retry Connection
-          </Link>
+          </button>
         </div>
       </div>
     </div>
