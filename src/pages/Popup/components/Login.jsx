@@ -23,10 +23,10 @@ const Login = () => {
     });
     getPostCall('login', 'post', data)
       .then((e) => {
-        chrome.storage.local.set({ Users: e.data });
         console.log(e.data);
         setError('');
         localStorageService.setItem('Users', e.data);
+        chrome.storage.local.set({ Users: e.data });
         setLoading(false);
         setError('Successfully');
         navigate('/GetStarted');
@@ -41,6 +41,7 @@ const Login = () => {
     } else {
       getCallBackendURL('user', 'get', users?.token).then((res) => {
         localStorageService.setItem('Users', res.data);
+        chrome.storage.local.set({ Users: res.data });
       });
       if (users?.current_plan === null && users?.scopebuilder_status === 0) {
         navigate('/GetStarted');

@@ -14,12 +14,17 @@ const checkNewJobs = () => {
             let newJobs = getDiff(prevJobs, data).length;
             console.log({ newJobs });
             if (newJobs > 0) {
-              chrome.notifications.create(Math.random().toString(), {
-                title: `${newJobs} new jobs have been posted 🙌`,
-                iconUrl: chrome.runtime.getURL('icon-sm.png'),
-                message: 'Be first to apply! 👊',
-                type: 'basic',
-              });
+              chrome.notifications.create(
+                {
+                  title: `${newJobs} new jobs have been posted 🙌`,
+                  iconUrl: chrome.runtime.getURL('icon-sm.png'),
+                  message: 'Be first to apply! 👊',
+                  type: 'basic',
+                },
+                (e) => {
+                  console.log('result callback:', e);
+                }
+              );
               chrome.action.setBadgeText({
                 text: newJobs.toString(),
               });

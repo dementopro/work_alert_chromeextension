@@ -58,6 +58,7 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
         } else {
           getCallBackendURL('user', 'get', stateUser?.token).then((res) => {
             localStorageService.setItem('Users', res.data);
+            chrome.storage.local.set({ Users: res.data });
             setStateUser(res.data);
           });
         }
