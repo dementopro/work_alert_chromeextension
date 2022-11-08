@@ -171,7 +171,7 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
                   <div className="my-[32px]">
                     <span className="text-[20px] font-medium block text-center  ">
                       {connectScopeBuilderLoadingStatus
-                        ? 'Connection To ScopeBuilder'
+                        ? 'Connecting To ScopeBuilder'
                         : users.scopebuilder_status === 1 &&
                           users.scopebuilder_link
                         ? 'ScopeBuilder Connected'
