@@ -13,7 +13,7 @@ export const copy = (text) => {
 };
 
 export const getDiff = (array1, array2) => {
-  const isSameUser = (obj1, obj2) => obj1.id === obj2.id;
+  const isSameUser = (obj1, obj2) => obj1.link === obj2.link;
 
   const onlyInLeft = (left, right, compareFunction) =>
     left.filter(

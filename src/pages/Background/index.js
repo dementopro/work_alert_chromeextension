@@ -9,6 +9,8 @@ const checkNewJobs = () => {
         let keywords = Object.values(result.keywords);
         if (keywords.length > 0) {
           getAllJobsBg(keywords).then((data) => {
+            console.log('prevJob:', prevJobs);
+            console.log('currJob:', data);
             let newJobs = getDiff(prevJobs, data).length;
             console.log({ newJobs });
             if (newJobs > 0) {
