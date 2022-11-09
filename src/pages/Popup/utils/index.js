@@ -27,3 +27,11 @@ export const getDiff = (array1, array2) => {
   const result = [...onlyInA, ...onlyInB];
   return result;
 };
+
+export const getUserInfoFromStorage = () => {
+  return new Promise((resolve) => {
+    chrome.storage.local.get('Users', async (result) => {
+      resolve(result.Users);
+    });
+  });
+};
