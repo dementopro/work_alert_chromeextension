@@ -26,18 +26,21 @@ const GetStarted = () => {
   };
   useEffect(() => {
     getPlans();
-    if (users?.current_plan === null && users?.scopebuilder_status === 0) {
-    } else {
-      navigate('/KeywordsConnect');
+    if (users) {
+      if (
+        users.current_plan ||
+        (users.scopebuilder_link && users.scopebuilder_status)
+      ) {
+        navigate('/KeywordsConnect');
+      }
     }
-  }, []);
+  }, [users]);
   const subscribeNow = () => {
     const users = JSON.parse(localStorage.getItem('Users'));
     const data = '';
     getPostCall('subscribe', 'post', data, users?.token)
       .then((response) => {
         const data = response.data;
-        console.log(response.data?.data);
         navigate('/KeywordsConnect');
         window.open(response.data?.data);
       })

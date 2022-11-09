@@ -10,8 +10,10 @@ import StatusFailed from './StatusFailed';
 import StatusConnecting from './StatusConnecting';
 import StatusConnectNow from './StatusConnectNow';
 import StatusConnected from './StatusConnected';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsers } from '../../../store/reducers/userSlice';
 
-const users = JSON.parse(localStorage.getItem('Users'));
+// const users = JSON.parse(localStorage.getItem('Users'));
 
 const ScopeBuilder = ({ fill = '#1890ff' }) => {
   const navigate = useNavigate();
@@ -23,10 +25,12 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
   ] = useState(false);
   const [connectScopeBuilderErrorState, setConnectScopeBuilderErrorState] =
     useState(false);
-  const [stateUser, setStateUser] = useState(users);
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.users);
+  // const [users,] = useState(users);
 
   const connectNow = () => {
-    getCallBackendURL('redirect-scopebuilder', 'get', stateUser?.token).then(
+    getCallBackendURL('redirect-scopebuilder', 'get', users?.token).then(
       (response) => {
         setScopeBuilderLink(response?.data?.url);
       }
@@ -35,32 +39,28 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
 
   useEffect(() => {
     if (
-      !stateUser?.details &&
-      stateUser?.scopebuilder_status &&
-      stateUser?.scopebuilder_link &&
-      stateUser
+      !users?.details &&
+      users?.scopebuilder_status &&
+      users?.scopebuilder_link &&
+      users
     ) {
       connectSBConnect();
     }
     return () => {};
-  }, [stateUser]);
+  }, [users]);
 
   const connectSBConnect = () => {
     var data = JSON.stringify({
-      ref: stateUser?.scopebuilder_link,
+      ref: users?.scopebuilder_link,
     });
     setConnectScopeBuilderLoadingStatus(true);
-    getPostCall('connect-scopebuilder', 'post', data, stateUser?.token)
+    getPostCall('connect-scopebuilder', 'post', data, users?.token)
       .then(function (response) {
         setConnectScopeBuilderLoadingStatus(false);
         if (response.error) {
           setConnectScopeBuilderErrorState(true);
         } else {
-          getCallBackendURL('user', 'get', stateUser?.token).then((res) => {
-            localStorageService.setItem('Users', res.data);
-            chrome.storage.local.set({ Users: res.data });
-            setStateUser(res.data);
-          });
+          dispatch(fetchUsers());
         }
       })
       .catch(function (error) {
@@ -71,8 +71,7 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
   };
 
   const seeProfile = () => {
-    if (stateUser?.scopebuilder_link)
-      setProfileLink(stateUser?.scopebuilder_link);
+    if (users?.scopebuilder_link) setProfileLink(users?.scopebuilder_link);
   };
 
   return (
@@ -116,9 +115,9 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               </span>
               <span
                 className={`${
-                  stateUser?.scopebuilder_status === 1 &&
-                  stateUser?.scopebuilder_link &&
-                  stateUser?.details
+                  users?.scopebuilder_status === 1 &&
+                  users?.scopebuilder_link &&
+                  users?.details
                     ? 'text-[#66DC78]'
                     : 'text-white'
                 } 
@@ -126,9 +125,9 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               >
                 {connectScopeBuilderLoadingStatus
                   ? 'Connecting...'
-                  : stateUser?.scopebuilder_status === 1 &&
-                    stateUser?.scopebuilder_link &&
-                    stateUser?.details
+                  : users?.scopebuilder_status === 1 &&
+                    users?.scopebuilder_link &&
+                    users?.details
                   ? 'Connected'
                   : 'Disconnected'}
               </span>
@@ -144,8 +143,7 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
               setConnectScopeBuilderLoadingStatus
             }
           />
-        ) : stateUser?.scopebuilder_status === 1 &&
-          stateUser?.scopebuilder_link ? (
+        ) : users?.scopebuilder_status === 1 && users?.scopebuilder_link ? (
           <StatusConnected
             fill="#1890ff"
             seeProfile={seeProfile}

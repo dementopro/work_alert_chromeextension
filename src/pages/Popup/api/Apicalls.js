@@ -19,6 +19,7 @@ export async function getPostCall(url, method, data, authToken) {
           resolve(e);
         })
         .catch((e) => {
+          alert(e.response.data.message);
           reject(e);
         });
     } catch (e) {
