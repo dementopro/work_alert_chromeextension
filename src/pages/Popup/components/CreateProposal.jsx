@@ -5,6 +5,7 @@ import localStorageService from '../api/localStorageService';
 import axios from 'axios';
 import { useState } from 'react';
 import { getPostCall } from '../api/Apicalls';
+import { useSelector } from 'react-redux';
 
 const CreateProposal = () => {
   const navigate = useNavigate();
@@ -12,7 +13,8 @@ const CreateProposal = () => {
   console.log(params.id);
   const [count, setCount] = React.useState(0);
   const [text, setText] = useState('');
-  const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
+  // const users = localStorageService.getItem('Users');
   const referral_text =
     'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
 

@@ -19,7 +19,8 @@ const Home = () => {
   const dispatch = useDispatch();
   const [isEdit, setIsEdit] = useState(false);
   const [proposalText, setProposalText] = useState('');
-  const users = localStorageService.getItem('Users');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
   const [showMoreState, setShowMoreState] = useState([]);
   const referral_text =
     'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';

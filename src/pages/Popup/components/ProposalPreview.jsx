@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import Loader from './Loader';
 import { copy } from '../utils';
+import { useSelector } from 'react-redux';
 
 const ProposalPreview = () => {
   const navigate = useNavigate();
@@ -14,7 +15,8 @@ const ProposalPreview = () => {
   const [proposalText, setProposalText] = useState('');
   const [proposalId, setProposalId] = useState('');
   const [loader, setLoader] = useState(false);
-  const users = localStorageService.getItem('Users');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
   const referral_text =
     'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
 

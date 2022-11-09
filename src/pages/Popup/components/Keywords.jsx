@@ -35,16 +35,21 @@ const Keywords = ({
   const [sbStatus, setSBStatus] = useState(false);
   const seenKey = '__seen';
   const dispatch = useDispatch();
-  const users = localStorageService.getItem('Users');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
 
   useEffect(() => {
-    if (
-      (users?.scopebuilder_status && users?.scopebuilder_link) ||
-      users?.current_plan
-    ) {
-      setSBStatus(true);
+    if (users) {
+      if (
+        (users?.scopebuilder_status && users?.scopebuilder_link) ||
+        users?.current_plan
+      ) {
+        setSBStatus(true);
+      } else {
+        setSBStatus(false);
+      }
     } else {
-      setSBStatus(false);
+      // navigate('/Login');
     }
     return () => {};
   }, [users]);

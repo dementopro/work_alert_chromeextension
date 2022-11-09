@@ -7,11 +7,13 @@ import axios from 'axios';
 import { useState } from 'react';
 import localStorageService from '../api/localStorageService';
 import { getPostCall } from '../api/Apicalls';
+import { useSelector } from 'react-redux';
 
 const GetStarted = () => {
   const [plans, setPlans] = useState({});
   const navigate = useNavigate();
-  const users = localStorageService.getItem('Users');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
   const getPlans = () => {
     var data = '';
     getPostCall('get-paid-plans', 'get', data)
