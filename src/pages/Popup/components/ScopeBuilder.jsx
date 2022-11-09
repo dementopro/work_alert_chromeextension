@@ -38,12 +38,12 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
       !stateUser?.details &&
       stateUser?.scopebuilder_status &&
       stateUser?.scopebuilder_link &&
-      users
+      stateUser
     ) {
       connectSBConnect();
     }
     return () => {};
-  }, [users]);
+  }, [stateUser]);
 
   const connectSBConnect = () => {
     var data = JSON.stringify({
