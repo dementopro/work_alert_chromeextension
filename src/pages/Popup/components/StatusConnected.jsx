@@ -1,12 +1,28 @@
 import React from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const StatusConnected = ({ fill, seeProfile, profileLink }) => {
+  const [filteredURL, setFilteredURL] = useState();
+
+  const { users } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    if (users?.scopebuilder_link) {
+      let tmpURL = new URL(users?.scopebuilder_link);
+      tmpURL.searchParams.delete('ref');
+      setFilteredURL(tmpURL.href);
+    }
+    return () => {};
+  }, [users]);
+
   return (
     <div
       className={`bg-gradient-green flex-1 rounded-[10px] flex items-center justify-center`}
     >
       {profileLink ? (
-        <iframe className="h-full w-full" src={profileLink} />
+        <iframe className="h-full w-full" src={filteredURL} />
       ) : (
         <div>
           <div className="relative mx-auto w-fit">
@@ -60,8 +76,6 @@ const StatusConnected = ({ fill, seeProfile, profileLink }) => {
             <button
               onClick={() => {
                 seeProfile();
-                // connectNow();
-                // to={'/StatusConnecting'}
               }}
               className={`text-[#66DC78] bg-white font-medium uppercase   text-[16px] py-[16px] px-[32px] rounded-[4px] `}
             >
