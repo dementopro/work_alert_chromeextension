@@ -49,6 +49,21 @@ const ScopeBuilder = ({ fill = '#1890ff' }) => {
     return () => {};
   }, [users]);
 
+  useEffect(() => {
+    var interval;
+    if (users && !interval) {
+      interval = setInterval(() => {
+        dispatch(fetchUsers());
+      }, 2000);
+    }
+    if (users?.scopebuilder_link && users?.scopebuilder_status) {
+      clearInterval(interval);
+    }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [users]);
+
   const connectSBConnect = () => {
     var data = JSON.stringify({
       ref: users?.scopebuilder_link,
