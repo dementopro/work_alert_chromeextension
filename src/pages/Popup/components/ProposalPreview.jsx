@@ -6,6 +6,8 @@ import localStorageService from '../api/localStorageService';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import Loader from './Loader';
+import { copy } from '../utils';
+import { useSelector } from 'react-redux';
 
 const ProposalPreview = () => {
   const navigate = useNavigate();
@@ -13,8 +15,10 @@ const ProposalPreview = () => {
   const [proposalText, setProposalText] = useState('');
   const [proposalId, setProposalId] = useState('');
   const [loader, setLoader] = useState(false);
-  console.log(params);
-  const users = localStorageService.getItem('Users');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
+  const referral_text =
+    'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
 
   const deleteProposals = () => {
     setLoader(true);
@@ -93,7 +97,20 @@ const ProposalPreview = () => {
               Proposal Preview
             </h1>
             <div className="">
-              <button className=" text-[20px] font-medium uppercase text-[#66DC78] mx-[16px]  ">
+              <button
+                className=" text-[20px] font-medium uppercase text-[#66DC78] mx-[16px]  "
+                onClick={() => {
+                  copy(
+                    proposalText
+                      .concat(' ')
+                      .concat(referral_text)
+                      .concat(' ')
+                      .concat(
+                        users.scopebuilder_link ? users.scopebuilder_link : ''
+                      )
+                  );
+                }}
+              >
                 Copy
               </button>
               <button
@@ -117,20 +134,24 @@ const ProposalPreview = () => {
               onChange={(e) => setProposalText(e.target.value)}
             />
 
-            <span className="text-[#999999] block text-right mx-[16px] invisible ">
-              {' '}
-              0<span>/500</span>{' '}
-            </span>
-
-            <div className=" m-[16px] p-[16px] bg-[#282828]  border border-[#999999] rounded-[4px]">
-              <span className=" font-medium text-[16px] text-[#999999] block uppercase">
-                {' '}
-                Referral Link{' '}
-              </span>
-              <a className="  text-[16px] rounded-[4px]  text-[#66DC78] block  ">
-                https://www.scopebuilder.com/referral=true{' '}
-              </a>
-            </div>
+            {users.scopebuilder_status && users.scopebuilder_link && (
+              <>
+                <span className="text-[#999999] block text-right mx-[16px] invisible ">
+                  {' '}
+                  0<span>/500</span>{' '}
+                </span>
+                <div className=" m-[16px] p-[16px] bg-[#282828]  border border-[#999999] rounded-[4px]">
+                  {referral_text}
+                  <span className=" font-medium text-[16px] text-[#999999] block uppercase">
+                    {' '}
+                    Referral Link{' '}
+                  </span>
+                  <a className="  text-[16px] rounded-[4px]  text-[#66DC78] block  ">
+                    {users.scopebuilder_link}
+                  </a>
+                </div>
+              </>
+            )}
           </div>
           <div className="flex gap-4">
             <button

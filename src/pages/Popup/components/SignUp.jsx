@@ -1,11 +1,15 @@
 import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { setUsers } from '../../../store/reducers/userSlice';
 import { getPostCall } from '../api/Apicalls';
+import localStorageService from '../api/localStorageService';
 import Header from './Header';
 
 const SignUp = () => {
+  const dispatch = useDispatch();
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -22,7 +26,10 @@ const SignUp = () => {
       try {
         getPostCall('register', 'post', data)
           .then((e) => {
-            navigate('/Login');
+            localStorageService.setItem('Users', e.data);
+            chrome.storage.local.set({ Users: e.data });
+            dispatch(setUsers(e.data));
+            navigate('/GetStarted');
           })
           .catch((e) => {
             setError(e.response.data.errors[0]);

@@ -35,7 +35,37 @@ const Keywords = ({
   const [sbStatus, setSBStatus] = useState(false);
   const seenKey = '__seen';
   const dispatch = useDispatch();
-  const users = localStorageService.getItem('Users');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    if (users) {
+      if (
+        (users?.scopebuilder_status && users?.scopebuilder_link) ||
+        users?.current_plan
+      ) {
+        setSBStatus(true);
+      } else {
+        setSBStatus(false);
+      }
+    } else {
+      // navigate('/Login');
+    }
+    return () => {};
+  }, [users]);
+
+  useEffect(() => {
+    if (jobs?.length > 0) {
+      let badgeText = jobs.filter((a) => a.__seen === false).length;
+      chrome.runtime.sendMessage({
+        from: 'Keywords.jsx',
+        action: 'SET_BADGE',
+        payload: badgeText ? badgeText : '',
+      });
+    }
+    return () => {};
+  }, [jobs]);
+
   function removeItem(selected) {
     getPostCall(`keywords/${selected.keywordId}`, 'delete', '', users?.token)
       .then((e) => {
@@ -225,17 +255,22 @@ const Keywords = ({
     }
   }
   const getStatus = () => {
-    getCall('verify-dev?waID=32&ref=Alex', 'get', users?.token)
-      .then((e) => {
-        if (e?.data?.error) {
-          setSBStatus(false);
-        } else {
-          setSBStatus(true);
-        }
-      })
-      .catch((e) => {
-        cons(e?.data);
-      });
+    // getCall(
+    //   `verify-dev?waID=${users.user_id}&ref=${users.email}`,
+    //   'get',
+    //   users?.token
+    // )
+    //   .then((e) => {
+    //     console.log({ kk: e });
+    //     if (e?.data?.message != 'success') {
+    //       setSBStatus(false);
+    //     } else {
+    //       setSBStatus(true);
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     cons(e?.data);
+    //   });
   };
   const getKeyword = () => {
     getPostCall('keywords', 'get', '', users?.token)
@@ -252,11 +287,13 @@ const Keywords = ({
   };
 
   useEffect(() => {
-    // navigate('/KeywordsConnect');
-    getKeyword();
-    getStatus();
-    const localStorageKeywords = localStorageService.getItem('keywords');
-    dispatch(setKeywords(localStorageKeywords));
+    if (!sbStatus) {
+      // navigate('/KeywordsConnect');
+      getKeyword();
+      // getStatus();
+      const localStorageKeywords = localStorageService.getItem('keywords');
+      dispatch(setKeywords(localStorageKeywords));
+    }
   }, []);
 
   const addKeywords = () => {
@@ -279,27 +316,46 @@ const Keywords = ({
         alert(error.response.data.message);
       });
   };
-  console.log(
-    moment(
-      moment(
-        moment(users?.current_plan?.updated_at) +
-          30 * users?.current_plan.items?.length
-      ).toISOString()
-    ).format('DD-MM-YYYY')
-  );
+  // console.log(
+  //   moment(
+  //     moment(
+  //       moment(users?.current_plan?.updated_at) +
+  //         30 * users?.current_plan.items?.length
+  //     ).toISOString()
+  //   ).format('DD-MM-YYYY')
+  // );
   return (
     <div className="app">
+      {!sbStatus && (
+        <div className="absolute z-20 h-screen w-screen bg-[rgb(0,0,0,0.7)] flex justify-center items-center ">
+          <div className="mx-32 bg-[#282828] h-auto flex justify-center item-center self-center flex-col p-[32px]">
+            <h2 className="text-center font-bold text-2xl">Access denied</h2>
+            <h3 className="text-center mb-5">
+              Subscribe or Connect ScopeBuilder to access extension
+            </h3>
+            <button
+              onClick={() => {
+                navigate('/GetStarted');
+              }}
+              className={`bg-[#66DC78] text-white font-medium uppercase   text-[16px] py-[16px] px-[32px] rounded-[4px] `}
+            >
+              Back
+            </button>
+          </div>
+        </div>
+      )}
       <Header
         styles={'bg-[#000000] text-white'}
         showButton={true}
         link={'/Login'}
         text={'log out'}
-        date={moment(
-          moment(
-            moment(users?.current_plan?.updated_at) +
-              30 * users?.current_plan.items?.length
-          ).toISOString()
-        ).format('DD-MM-YYYY')}
+        date={
+          users?.current_plan?.expired_at
+            ? moment(
+                moment(moment(users?.current_plan?.expired_at)).toISOString()
+              ).format('DD-MM-YYYY')
+            : null
+        }
       />
 
       <div className="bg-[#000000] px-[32px] relative">
@@ -394,7 +450,7 @@ const Keywords = ({
             link={link}
             text={text}
             styles={styles}
-            status={sbStatus}
+            status={users?.scopebuilder_status && users?.scopebuilder_link}
             fill={fill}
           />
         </div>

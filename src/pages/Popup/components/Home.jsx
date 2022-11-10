@@ -8,13 +8,22 @@ import he from 'he';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchJobs, markAsSeen } from '../../../store/reducers/keywords';
 import localStorageService from '../api/localStorageService';
+import { getPostCall } from '../api/Apicalls';
+import { useState } from 'react';
+import { copy } from '../utils';
 
 const Home = () => {
   const params = useParams();
-  console.log(params);
   const keyword = useLocation();
   const allNewJobs = useSelector((state) => state.keywords);
   const dispatch = useDispatch();
+  const [isEdit, setIsEdit] = useState(false);
+  const [proposalText, setProposalText] = useState('');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
+  const [showMoreState, setShowMoreState] = useState([]);
+  const referral_text =
+    'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
 
   const handleToggleModal = (link) => {
     // setShowModal(!showModal);
@@ -35,15 +44,17 @@ const Home = () => {
   const filteredJobs = (IncomingJobs) => {
     const localStorageJobs = localStorageService.getItem('jobs');
     if (IncomingJobs && IncomingJobs.length !== 0) {
-      console.log(IncomingJobs);
-      console.log('it will go here');
+      console.log(
+        'it will go here',
+        IncomingJobs.filter((a) => a.__seen === false).length
+      );
+
       return IncomingJobs.filter(
         (job) => job.keyword === keyword.state[0].keyword
       );
     }
     if (localStorageJobs && localStorageJobs !== 0) {
       console.log('this is local storage');
-      console.log(localStorageJobs);
       return localStorageJobs.filter(
         (job) => job.keyword === keyword.state[0].keyword
       );
@@ -52,17 +63,52 @@ const Home = () => {
   };
 
   useEffect(() => {
+    if (allNewJobs?.jobs?.length > 0) {
+      let badgeText = allNewJobs?.jobs
+        // .slice(0, 30)
+        .filter((a) => a.__seen === false).length;
+      chrome.runtime.sendMessage({
+        from: 'Home.jsx',
+        action: 'SET_BADGE',
+        payload: badgeText ? badgeText : '',
+      });
+    }
+    return () => {};
+  }, [allNewJobs?.jobs]);
+
+  useEffect(() => {
     //   let config = localStorage.getItem('config')
     //   let configObj = config ? JSON.parse(config) : { 'url': 'https://www.upwork.com/ab/feed/topics/rss?securityToken=a1cffed403e9bca2ec42655707a6fa273aa337e1dc98bc0487df198ec8dc614486fc75097cd45f292335ec9997f3436fc373b3bb688745f09899a3e4985058d1&userUid=1261666235980595200&orgUid=1261666235993178113&topic=most-recent', 'interval': 1 };
     //   fetchData(configObj);
     // fetchData()
-    console.log('useEffect of Home is Triggered');
+    getPostCall(`proposals?keyword_id=${params?.id}`, 'get', '', users?.token)
+      .then((e) => {
+        if (e.data?.data.length !== 0) {
+          console.log('proposalList:', e.data);
+          if (e.data?.data?.length > 0) {
+            setIsEdit(true);
+            setProposalText(e?.data?.data[0].details);
+          }
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
     return () => {
       // if (allNewJobs && allNewJobs.jobs.length !==0) {
       // }
       dispatch(markAsSeen(keyword.state[0].keyword));
     };
   }, []);
+
+  useEffect(() => {
+    if (allNewJobs?.jobs) {
+      if (allNewJobs.jobs.length > 0) {
+        setShowMoreState(allNewJobs.jobs);
+      }
+    }
+    return () => {};
+  }, [allNewJobs?.jobs]);
 
   return (
     <div>
@@ -115,7 +161,11 @@ const Home = () => {
             <div className=" px-[32px]">
               <div className="flex gap-[16px] ">
                 <Link
-                  to={`/CreateProposal/${params.id}`}
+                  to={
+                    isEdit
+                      ? `/ProposalPreview/${params.id}`
+                      : `/CreateProposal/${params.id}`
+                  }
                   className="flex items-center justify-center rounded-full w-[59px] h-[59px] bg-[#142C18] "
                 >
                   <svg
@@ -143,39 +193,53 @@ const Home = () => {
                   </svg>
                 </Link>
 
-                <Link
-                  to={`/ProposalPreview/${params.id}`}
-                  className="flex items-center justify-center rounded-full w-[59px] h-[59px] bg-[#142C18] "
-                >
-                  <svg
-                    id="copy"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
+                {isEdit && (
+                  <button
+                    onClick={() =>
+                      copy(
+                        proposalText
+                          .concat(' ')
+                          .concat(referral_text)
+                          .concat(' ')
+                          .concat(
+                            users.scopebuilder_link
+                              ? users.scopebuilder_link
+                              : ''
+                          )
+                      )
+                    }
+                    className="flex items-center justify-center rounded-full w-[59px] h-[59px] bg-[#142C18] "
                   >
-                    <path
-                      id="Vector"
-                      d="M14,4.9V9.1c0,3.5-1.4,4.9-4.9,4.9H4.9C1.4,14,0,12.6,0,9.1V4.9C0,1.4,1.4,0,4.9,0H9.1C12.6,0,14,1.4,14,4.9Z"
-                      transform="translate(2 8)"
-                      fill="#66dc78"
-                    />
-                    <path
-                      id="Vector-2"
-                      data-name="Vector"
-                      d="M9.09,0H4.89C1.44,0,.04,1.37,0,4.75H3.09c4.2,0,6.15,1.95,6.15,6.15v3.09c3.38-.04,4.75-1.44,4.75-4.89V4.9C13.99,1.4,12.59,0,9.09,0Z"
-                      transform="translate(8.01 2)"
-                      fill="#66dc78"
-                    />
-                    <path
-                      id="Vector-3"
-                      data-name="Vector"
-                      d="M0,0H24V24H0Z"
-                      fill="none"
-                      opacity="0"
-                    />
-                  </svg>
-                </Link>
+                    <svg
+                      id="copy"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        id="Vector"
+                        d="M14,4.9V9.1c0,3.5-1.4,4.9-4.9,4.9H4.9C1.4,14,0,12.6,0,9.1V4.9C0,1.4,1.4,0,4.9,0H9.1C12.6,0,14,1.4,14,4.9Z"
+                        transform="translate(2 8)"
+                        fill="#66dc78"
+                      />
+                      <path
+                        id="Vector-2"
+                        data-name="Vector"
+                        d="M9.09,0H4.89C1.44,0,.04,1.37,0,4.75H3.09c4.2,0,6.15,1.95,6.15,6.15v3.09c3.38-.04,4.75-1.44,4.75-4.89V4.9C13.99,1.4,12.59,0,9.09,0Z"
+                        transform="translate(8.01 2)"
+                        fill="#66dc78"
+                      />
+                      <path
+                        id="Vector-3"
+                        data-name="Vector"
+                        d="M0,0H24V24H0Z"
+                        fill="none"
+                        opacity="0"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -214,15 +278,48 @@ const Home = () => {
                       {handleHTMLcoding(item.title)}
                     </h1>
                     <p className=" text-[#999999] text-[16px] leading-[32px] mb-[16px]   ">
-                      {truncate(item.description)}
+                      {showMoreState.find((a) => a.link === item.link)?.seeMore
+                        ? item.description
+                        : truncate(item.description)}
                     </p>
-                    <button
-                      onClick={() => handleToggleModal(item.link)}
-                      className="font-bold text-[#66DC78] text-[16px]"
-                    >
-                      {' '}
-                      Read More{' '}
-                    </button>
+                    {handleHTMLcoding(item.description).length > 190 ? (
+                      <button
+                        onClick={() => {
+                          if (
+                            showMoreState.find((a) => a.link === item.link)
+                              ?.seeMore
+                          ) {
+                            handleToggleModal(item.link);
+                          } else {
+                            setShowMoreState((prev) => {
+                              const newState = prev.map((obj) => {
+                                if (obj.link === item.link) {
+                                  return { ...obj, seeMore: !obj?.seeMore };
+                                } else {
+                                  return obj;
+                                }
+                              });
+                              return newState;
+                            });
+                          }
+                        }}
+                        className="font-bold text-[#66DC78] text-[16px]"
+                      >
+                        {showMoreState.find((a) => a.link === item.link)
+                          ?.seeMore
+                          ? 'View Job Posting'
+                          : 'Read More'}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          handleToggleModal(item.link);
+                        }}
+                        className="font-bold text-[#66DC78] text-[16px]"
+                      >
+                        View Job Posting
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

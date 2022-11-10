@@ -7,11 +7,13 @@ import axios from 'axios';
 import { useState } from 'react';
 import localStorageService from '../api/localStorageService';
 import { getPostCall } from '../api/Apicalls';
+import { useSelector } from 'react-redux';
 
 const GetStarted = () => {
   const [plans, setPlans] = useState({});
   const navigate = useNavigate();
-  const users = localStorageService.getItem('Users');
+  // const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
   const getPlans = () => {
     var data = '';
     getPostCall('get-paid-plans', 'get', data)
@@ -24,24 +26,17 @@ const GetStarted = () => {
   };
   useEffect(() => {
     getPlans();
-    if (users?.current_plan === null && users?.scopebuilder_status === 0) {
-    } else {
-      navigate('/KeywordsConnect');
-    }
-  }, []);
-  const subscribeNow = () => {
-    const users = JSON.parse(localStorage.getItem('Users'));
-    const data = '';
-    getPostCall('subscribe', 'post', data, users?.token)
-      .then((response) => {
-        const data = response.data;
-        console.log(response.data?.data);
+    if (users) {
+      if (
+        users.current_plan ||
+        (users.scopebuilder_link && users.scopebuilder_status)
+      ) {
         navigate('/KeywordsConnect');
-        window.open(response.data?.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
+    }
+  }, [users]);
+  const subscribeNow = () => {
+    navigate('/SubscribeNow');
   };
   return (
     <div className="flex flex-col h-full">

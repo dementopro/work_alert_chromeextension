@@ -5,6 +5,7 @@ import localStorageService from '../api/localStorageService';
 import axios from 'axios';
 import { useState } from 'react';
 import { getPostCall } from '../api/Apicalls';
+import { useSelector } from 'react-redux';
 
 const CreateProposal = () => {
   const navigate = useNavigate();
@@ -12,7 +13,11 @@ const CreateProposal = () => {
   console.log(params.id);
   const [count, setCount] = React.useState(0);
   const [text, setText] = useState('');
-  const users = localStorageService.getItem('Users');
+  const { users } = useSelector((state) => state.users);
+  // const users = localStorageService.getItem('Users');
+  const referral_text =
+    'A clear scope increase your projects creation success rate by 92%, Scope Builder makes it easy for you to compile your scope/requirements.';
+
   const submitProposal = async () => {
     var data = JSON.stringify({
       keyword_id: params.id,
@@ -64,12 +69,13 @@ const CreateProposal = () => {
               <span>/500</span>{' '}
             </span>
             <div className=" m-[16px] p-[16px] bg-[#282828]  border border-[#999999] rounded-[4px] ">
+              {referral_text}
               <span className=" font-medium text-[16px] text-[#999999] block uppercase  ">
                 {' '}
                 Referral Link{' '}
               </span>
               <a className="  text-[16px] rounded-[4px]   text-[#66DC78] block  ">
-                https://www.scopebuilder.com/referral=true{' '}
+                {users.scopebuilder_link}
               </a>
             </div>
           </div>

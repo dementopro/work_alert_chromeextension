@@ -12,7 +12,7 @@
   "icons": {
     "128": "icon-sm.png"
   },
-  "permissions": ["background", "storage"],
+  "permissions": ["background", "storage", "notifications"],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],

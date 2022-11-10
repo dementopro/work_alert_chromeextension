@@ -5,46 +5,53 @@ import axios from 'axios';
 import { useState } from 'react';
 import localStorageService from '../api/localStorageService';
 import { useEffect } from 'react';
-import { getPostCall } from '../api/Apicalls';
+import { getCallBackendURL, getPostCall } from '../api/Apicalls';
 import Loader from './Loader';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsers } from '../../../store/reducers/userSlice';
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.users);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const users = localStorageService.getItem('Users');
   const onSubmit = () => {
     setLoading(true);
-    var data = JSON.stringify({
-      email: email,
-      password: password,
-    });
-    getPostCall('login', 'post', data)
-      .then((e) => {
-        console.log(e.data);
-        setError('');
-        localStorageService.setItem('Users', e.data);
-        setLoading(false);
-        setError('Successfully');
-        navigate('/GetStarted');
+    dispatch(
+      fetchUsers({
+        email,
+        password,
       })
-      .catch((e) => {
-        setLoading(false);
-        alert(e.message);
-      });
+    ).then((data) => {
+      if (!data.error) {
+        navigate('/GetStarted');
+      }
+      setLoading(false);
+    });
   };
   useEffect(() => {
-    if (users === null) {
-    } else {
+    setLoading(true);
+    dispatch(fetchUsers()).then((data) => {
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (users) {
       if (users?.current_plan === null && users?.scopebuilder_status === 0) {
         navigate('/GetStarted');
       } else {
         navigate('/KeywordsConnect');
       }
+    } else {
+      navigate('/Login');
     }
-  }, []);
+    return () => {};
+  }, [users]);
+
   return (
     <div className="flex flex-col h-full">
       <Header

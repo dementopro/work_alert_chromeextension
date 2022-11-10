@@ -19,6 +19,7 @@ import { useEffect } from 'react';
 import { fetchJobs } from '../../store/reducers/keywords';
 import { useDispatch } from 'react-redux';
 import Proposals from './components/Proposals';
+import SubscribeNow from './components/SubscribeNow';
 
 const Popup = () => {
   const dispatch = useDispatch();
@@ -98,6 +99,7 @@ const Popup = () => {
           />
           <Route path="/Proposals/:id" element={<Proposals />} />
           <Route path="/ProposalPreview/:id" element={<ProposalPreview />} />
+          <Route path="/SubscribeNow" element={<SubscribeNow />} />
         </Routes>
       </MemoryRouter>
     </>
