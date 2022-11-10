@@ -36,17 +36,7 @@ const GetStarted = () => {
     }
   }, [users]);
   const subscribeNow = () => {
-    const users = JSON.parse(localStorage.getItem('Users'));
-    const data = '';
-    getPostCall('subscribe', 'post', data, users?.token)
-      .then((response) => {
-        const data = response.data;
-        navigate('/KeywordsConnect');
-        window.open(response.data?.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    navigate('/SubscribeNow');
   };
   return (
     <div className="flex flex-col h-full">
